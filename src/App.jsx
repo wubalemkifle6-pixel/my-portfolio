@@ -1,4 +1,6 @@
+
 import { useState } from "react";
+import emailjs from "@emailjs/browser";
 import "./index.css";
 import profilePicture from "./assets/profile.jpg";
 
@@ -51,26 +53,59 @@ const skills = [
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [formStatus, setFormStatus] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
 
   const closeMenu = () => setMenuOpen(false);
 
-  const handleContactSubmit = (event) => {
+  const handleContactSubmit = async (event) => {
+    // Stop the browser from opening a blank page.
     event.preventDefault();
 
-    const form = new FormData(event.currentTarget);
-    const name = form.get("name");
-    const email = form.get("email");
-    const message = form.get("message");
+    if (sending) return;
 
-    // Replace this with your real email address.
-    const recipient = "wubalemkifle6@gmail.com";
-    const subject = encodeURIComponent(`Portfolio message from ${name}`);
-    const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
-    );
+    const formElement = event.currentTarget;
 
-    window.location.href =
-      `mailto:${recipient}?subject=${subject}&body=${body}`;
+    setSending(true);
+    setFormStatus("");
+    setEmailSent(false);
+
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+      setFormStatus(
+        "Email setup is incomplete. Please check your EmailJS settings."
+      );
+      setSending(false);
+      return;
+    }
+
+    try {
+      await emailjs.sendForm(
+        serviceId,
+        templateId,
+        formElement,
+        { publicKey }
+      );
+
+      setEmailSent(true);
+      setFormStatus(
+        "Success! Your message has been sent. Thank you for contacting me!"
+      );
+
+      formElement.reset();
+    } catch (error) {
+      console.error("EmailJS error:", error);
+
+      setFormStatus(
+        "Sorry, your message could not be sent. Please try again."
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -100,7 +135,11 @@ function App() {
             <a href="#skills" onClick={closeMenu}>Skills</a>
             <a href="#projects" onClick={closeMenu}>Projects</a>
             <a href="#education" onClick={closeMenu}>Education</a>
-            <a className="nav-contact" href="#contact" onClick={closeMenu}>
+            <a
+              className="nav-contact"
+              href="#contact"
+              onClick={closeMenu}
+            >
               Contact me ↗
             </a>
           </div>
@@ -108,6 +147,7 @@ function App() {
       </header>
 
       <main>
+        {/* HOME SECTION */}
         <section className="hero section" id="home">
           <div className="container hero-grid">
             <div className="hero-content">
@@ -116,22 +156,29 @@ function App() {
                 I am Wubalem Kifle — Software Engineering student
               </div>
 
-              <p className="eyebrow">HELLO, WELCOME TO MY PORTFOLIO</p>
+              <p className="eyebrow">
+                HELLO, WELCOME TO MY PORTFOLIO
+              </p>
+
               <h1>
                 Building ideas into{" "}
-                <span className="gradient-text">useful software.</span>
+                <span className="gradient-text">
+                  useful software.
+                </span>
               </h1>
 
               <p className="hero-description">
-                I&apos;m a Software Engineering student at Wachemo University
-                interested in Java development, web technologies, databases,
-                and building practical software projects.
+                I&apos;m a Software Engineering student at Wachemo
+                University interested in Java development, web
+                technologies, databases, and building practical
+                software projects.
               </p>
 
               <div className="hero-actions">
                 <a className="button button-primary" href="#projects">
                   Explore my projects <span>↗</span>
                 </a>
+
                 <a className="button button-secondary" href="#about">
                   About me
                 </a>
@@ -145,13 +192,16 @@ function App() {
                 >
                   GitHub ↗
                 </a>
+
                 <span className="social-divider">/</span>
+
                 <a href="#contact">Let&apos;s connect ↗</a>
               </div>
             </div>
 
             <div className="hero-visual">
               <div className="visual-glow"></div>
+
               <div className="code-window">
                 <div className="window-bar">
                   <span className="window-dot red"></span>
@@ -165,28 +215,39 @@ function App() {
                     <span className="code-purple">public class</span>{" "}
                     <span className="code-yellow">Developer</span> {"{"}
                   </p>
+
                   <p className="indent">
                     <span className="code-purple">String</span> name ={" "}
-                    <span className="code-green">&quot;Wubalem Kifle&quot;</span>;
+                    <span className="code-green">
+                      &quot;Wubalem Kifle&quot;
+                    </span>;
                   </p>
+
                   <p className="indent">
                     <span className="code-purple">String</span> focus ={" "}
-                    <span className="code-green">&quot;Java & Web&quot;</span>;
+                    <span className="code-green">
+                      &quot;Java & Web&quot;
+                    </span>;
                   </p>
+
                   <p className="indent">
                     <span className="code-purple">boolean</span> learning ={" "}
                     <span className="code-orange">true</span>;
                   </p>
+
                   <br />
+
                   <p className="indent">
                     <span className="code-purple">void</span>{" "}
                     <span className="code-yellow">build</span>() {"{"}
                   </p>
+
                   <p className="indent double-indent">learn();</p>
                   <p className="indent double-indent">create();</p>
                   <p className="indent double-indent">improve();</p>
                   <p className="indent">{"}"}</p>
                   <p>{"}"}</p>
+
                   <div className="code-cursor"></div>
                 </div>
 
@@ -216,16 +277,21 @@ function App() {
 
           <div className="container hero-bottom">
             <span>SCROLL TO DISCOVER</span>
-            <a href="#about" aria-label="Scroll to about section">↓</a>
+            <a href="#about" aria-label="Scroll to about section">
+              ↓
+            </a>
             <span className="hero-line"></span>
           </div>
         </section>
 
+        {/* ABOUT SECTION */}
         <section className="section about-section" id="about">
           <div className="container">
             <div className="section-heading">
               <p className="eyebrow">GET TO KNOW ME</p>
-              <h2>About <span className="gradient-text">me</span></h2>
+              <h2>
+                About <span className="gradient-text">me</span>
+              </h2>
               <p className="section-subtitle">
                 A student, a problem solver, and a developer in progress.
               </p>
@@ -240,22 +306,28 @@ function App() {
                     className="profile-photo"
                   />
                 </div>
+
                 <p className="eyebrow">MY STORY</p>
                 <h3>Learning today. Building for tomorrow.</h3>
+
                 <p>
-                  I am a Software Engineering student at Wachemo University,
-                  Ethiopia. I enjoy learning how software works and turning
-                  ideas into applications that solve real problems.
+                  I am a Software Engineering student at Wachemo
+                  University, Ethiopia. I enjoy learning how software
+                  works and turning ideas into applications that solve
+                  real problems.
                 </p>
+
                 <p>
-                  My learning journey includes Java programming, software
-                  design patterns, databases, and modern frontend development.
-                  I am also exploring how frontend applications communicate
-                  with backend services.
+                  My learning journey includes Java programming,
+                  software design patterns, databases, and modern
+                  frontend development. I am also exploring how frontend
+                  applications communicate with backend services.
                 </p>
+
                 <p>
-                  My goal is to keep improving through practical projects,
-                  teamwork, and real-world development experience.
+                  My goal is to keep improving through practical
+                  projects, teamwork, and real-world development
+                  experience.
                 </p>
               </div>
 
@@ -265,8 +337,8 @@ function App() {
                   <div>
                     <h3>What I enjoy</h3>
                     <p>
-                      Programming, solving problems, designing applications,
-                      and learning new technologies.
+                      Programming, solving problems, designing
+                      applications, and learning new technologies.
                     </p>
                   </div>
                 </article>
@@ -287,13 +359,17 @@ function App() {
                   <div>
                     <h3>My goal</h3>
                     <p>
-                      Gain practical experience, contribute to useful projects,
-                      and grow into a professional software developer.
+                      Gain practical experience, contribute to useful
+                      projects, and grow into a professional software
+                      developer.
                     </p>
                   </div>
                 </article>
 
-                <a className="button button-secondary about-button" href="#contact">
+                <a
+                  className="button button-secondary about-button"
+                  href="#contact"
+                >
                   Get in touch <span>↗</span>
                 </a>
               </div>
@@ -301,16 +377,18 @@ function App() {
           </div>
         </section>
 
+        {/* SKILLS SECTION */}
         <section className="section skills-section" id="skills">
           <div className="container">
             <div className="section-heading">
               <p className="eyebrow">MY TOOLKIT</p>
               <h2>
-                Skills &amp; <span className="gradient-text">technologies</span>
+                Skills &amp;{" "}
+                <span className="gradient-text">technologies</span>
               </h2>
               <p className="section-subtitle">
-                Technologies I have studied or used in learning and academic
-                projects. Percentages are my own estimates.
+                Technologies I have studied or used in learning and
+                academic projects. Percentages are my own estimates.
               </p>
             </div>
 
@@ -322,7 +400,10 @@ function App() {
                       <h3>{skill.name}</h3>
                       <p>{skill.category}</p>
                     </div>
-                    <span className="skill-percent">{skill.percent}%</span>
+
+                    <span className="skill-percent">
+                      {skill.percent}%
+                    </span>
                   </div>
 
                   <div
@@ -343,17 +424,23 @@ function App() {
             </div>
 
             <p className="skills-note">
-              My skills are growing through coursework, practice, and project
-              development. Update the percentages as your experience improves.
+              My skills are growing through coursework, practice, and
+              project development. Update the percentages as your
+              experience improves.
             </p>
           </div>
         </section>
 
+        {/* PROJECTS SECTION */}
         <section className="section projects-section" id="projects">
           <div className="container">
             <div className="section-heading">
-              <p className="eyebrow">WHAT I&apos;VE BEEN WORKING ON</p>
-              <h2>Selected <span className="gradient-text">projects</span></h2>
+              <p className="eyebrow">
+                WHAT I&apos;VE BEEN WORKING ON
+              </p>
+              <h2>
+                Selected <span className="gradient-text">projects</span>
+              </h2>
               <p className="section-subtitle">
                 Academic and personal projects that support my software
                 development journey.
@@ -364,17 +451,26 @@ function App() {
               {projects.map((project) => (
                 <article className="project-card" key={project.number}>
                   <div className="project-top">
-                    <span className="project-number">{project.number}</span>
-                    <span className="project-status">{project.status}</span>
+                    <span className="project-number">
+                      {project.number}
+                    </span>
+                    <span className="project-status">
+                      {project.status}
+                    </span>
                   </div>
+
                   <p className="project-type">{project.type}</p>
                   <h3>{project.name}</h3>
-                  <p className="project-description">{project.description}</p>
+                  <p className="project-description">
+                    {project.description}
+                  </p>
+
                   <div className="tech-list">
                     {project.technologies.map((technology) => (
                       <span key={technology}>{technology}</span>
                     ))}
                   </div>
+
                   <a
                     className="project-link"
                     href={project.link}
@@ -392,10 +488,11 @@ function App() {
                 <p className="eyebrow">MORE CODE, MORE LEARNING</p>
                 <h3>Explore my GitHub profile</h3>
                 <p>
-                  Visit my profile to see available repositories and project
-                  updates.
+                  Visit my profile to see available repositories and
+                  project updates.
                 </p>
               </div>
+
               <a
                 className="button button-primary"
                 href="https://github.com/wubalemkifle6-pixel"
@@ -408,39 +505,50 @@ function App() {
           </div>
         </section>
 
+        {/* EDUCATION SECTION */}
         <section className="section education-section" id="education">
           <div className="container">
             <div className="section-heading">
               <p className="eyebrow">MY LEARNING JOURNEY</p>
-              <h2>Education &amp; <span className="gradient-text">growth</span></h2>
+              <h2>
+                Education &amp;{" "}
+                <span className="gradient-text">growth</span>
+              </h2>
             </div>
+
             <div className="education-card">
               <div className="education-icon">⌂</div>
+
               <div className="education-content">
-                <span className="education-label">UNIVERSITY EDUCATION</span>
+                <span className="education-label">
+                  UNIVERSITY EDUCATION
+                </span>
                 <h3>Wachemo University</h3>
                 <p className="education-degree">Software Engineering</p>
                 <p>
-                  Studying programming, software design, database systems,
-                  distributed systems, and the principles of building reliable
-                  software applications.
+                  Studying programming, software design, database
+                  systems, distributed systems, and the principles of
+                  building reliable software applications.
                 </p>
               </div>
+
               <span className="education-location">Ethiopia</span>
             </div>
           </div>
         </section>
 
+        {/* CONTACT SECTION — EMAILJS CONNECTED */}
         <section className="section contact-section" id="contact">
           <div className="container">
             <div className="section-heading">
               <p className="eyebrow">LET&apos;S CONNECT</p>
               <h2>
-                Have an idea? <span className="gradient-text">Let&apos;s talk.</span>
+                Have an idea?{" "}
+                <span className="gradient-text">Let&apos;s talk.</span>
               </h2>
               <p className="section-subtitle">
-                Interested in a project, collaboration, or learning opportunity?
-                I would be happy to hear from you.
+                Interested in a project, collaboration, or learning
+                opportunity? I would be happy to hear from you.
               </p>
             </div>
 
@@ -448,9 +556,10 @@ function App() {
               <div className="contact-info">
                 <h3>Get in touch</h3>
                 <p>
-                  You can contact me by email or find my code and project updates
-                  on GitHub.
+                  You can contact me by email or find my code and
+                  project updates on GitHub.
                 </p>
+
                 <a
                   className="contact-method"
                   href="mailto:wubalemkifle6@gmail.com"
@@ -462,6 +571,7 @@ function App() {
                   </span>
                   <span className="contact-arrow">↗</span>
                 </a>
+
                 <a
                   className="contact-method"
                   href="https://github.com/wubalemkifle6-pixel"
@@ -477,22 +587,27 @@ function App() {
                 </a>
               </div>
 
-              <form className="contact-form" onSubmit={handleContactSubmit}>
+              <form
+                className="contact-form"
+                onSubmit={handleContactSubmit}
+              >
                 <label htmlFor="name">Your name</label>
                 <input
                   id="name"
-                  name="name"
+                  name="user_name"
                   type="text"
                   placeholder="Enter your name"
+                  autoComplete="name"
                   required
                 />
 
                 <label htmlFor="email">Your email</label>
                 <input
                   id="email"
-                  name="email"
+                  name="user_email"
                   type="email"
                   placeholder="you@example.com"
+                  autoComplete="email"
                   required
                 />
 
@@ -505,19 +620,33 @@ function App() {
                   required
                 ></textarea>
 
-                <button className="button button-primary submit-button" type="submit">
-                  Prepare email <span>↗</span>
+                <button
+                  className="button button-primary submit-button"
+                  type="submit"
+                  disabled={sending}
+                >
+                  {sending ? "Sending..." : "Send Message"}
+                  {!sending && <span> ↗</span>}
                 </button>
-                <p className="form-note">
-                  This opens your email application. The website does not store
-                  or send messages directly.
-                </p>
+
+                {formStatus && (
+                  <p
+                    className={`form-note ${
+                      emailSent ? "form-success" : "form-error"
+                    }`}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    {formStatus}
+                  </p>
+                )}
               </form>
             </div>
           </div>
         </section>
       </main>
 
+      {/* FOOTER */}
       <footer className="site-footer">
         <div className="container footer-content">
           <a className="brand" href="#home">
@@ -526,9 +655,16 @@ function App() {
               MyPortfolio<span className="brand-dot">.</span>
             </span>
           </a>
-          <p>Designed and built with React. Always learning, always improving.</p>
-          <a href="#home" className="back-to-top">Back to top ↑</a>
+
+          <p>
+            Designed and built with React. Always learning, always improving.
+          </p>
+
+          <a href="#home" className="back-to-top">
+            Back to top ↑
+          </a>
         </div>
+
         <div className="container footer-bottom">
           <span>© {new Date().getFullYear()} My Portfolio</span>
           <span>Made with curiosity in Ethiopia.</span>
@@ -539,4 +675,3 @@ function App() {
 }
 
 export default App;
-
