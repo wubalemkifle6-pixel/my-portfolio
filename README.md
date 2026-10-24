@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Developer Portfolio (React + Vite)
 
 A responsive dark navy and blue portfolio starter for a Software Engineering student applying for internships.
@@ -34,3 +35,6 @@ Vite creates the production website in the `dist` folder.
 
 ## Important
 The project cards currently use your known GitHub profile for projects whose individual repository URLs were not provided. Replace those profile links with the correct repository URLs when available. The descriptions are starter copy; make sure they match the features you have actually implemented.
+=======
+# my-portfolio
+>>>>>>> 170552ad717a1dff2f56a5fdcc069e6e57a7771f
