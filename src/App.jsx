@@ -23,7 +23,7 @@ const projects = [
       "A student management application concept for handling student records, administrator approval, and role-based access.",
     technologies: ["HTML", "CSS", "JavaScript", "MySQL"],
     status: "Academic project",
-    link: "https://github.com/wubalemkifle6-pixel",
+    link: "https://github.com/wubalemkifle6-pixel/School-Management-System",
   },
   {
     number: "03",
