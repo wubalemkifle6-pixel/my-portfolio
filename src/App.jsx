@@ -13,7 +13,7 @@ const projects = [
       "A marketplace concept designed to connect sellers and customers in Ethiopia and internationally, with product browsing and a seller-focused experience.",
     technologies: ["React", "Node.js", "Express", "MongoDB"],
     status: "In progress",
-    link: "https://github.com/wubalemkifle6-pixel/SMS",
+    link: "https://github.com/wubalemkifle6-pixel",
   },
   {
     number: "02",
@@ -23,7 +23,7 @@ const projects = [
       "A student management application concept for handling student records, administrator approval, and role-based access.",
     technologies: ["HTML", "CSS", "JavaScript", "MySQL"],
     status: "Academic project",
-   link:"https://github.com/wubalemkifle6-pixel/SMS",
+  link: "https://github.com/wubalemkifle6-pixel/SMS",
   },
   {
     number: "03",
